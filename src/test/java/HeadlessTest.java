@@ -1,46 +1,44 @@
-import jdk.internal.org.objectweb.asm.util.Printer;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class HeadlessChromeTest {
-
-    private WebDriver driver;
-
-    @BeforeEach
-    void setUp() {
-
+public class HeadlessTest {
+    public static void main(String[] args) {
         System.setProperty("webdriver.chrome.driver", "/Users/kirill/Documents/chromedriver-mac-x64/chromedriver");
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
-        driver = new ChromeDriver(options);
-    }
+        options.addArguments("--disable-gpu");
+        options.addArguments("--window-size=1920,1080");
+        options.addArguments("--ignore-certificate-errors");
+        options.addArguments("--silent");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
 
-    @AfterEach
-    void tearDown() {
-        if (driver != null) {
-            driver.quit();
+        WebDriver driver = null;
+        try {
+            driver = new ChromeDriver(options);
+
+            String url = "https://duckduckgo.com/";
+            driver.get(url);
+
+            WebDriverWait wait = new WebDriverWait(driver, 20);
+            WebElement searchInput = wait.until(ExpectedConditions.presenceOfElementLocated(By.name("q")));
+            searchInput.sendKeys("Отус");
+            WebElement searchButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button.searchbox_searchButton__F5Bwq")));
+            searchButton.click();
+            WebElement resultElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.ikg2IXiCD14iVX7AdZo1")));
+            String resultText = resultElement.getText();
+            assertTrue(resultText.contains("Онлайн‑курсы для профессионалов, дистанционное обучение современным"));
+        } finally {
+            if (driver != null) {
+                driver.quit();
+            }
         }
-    }
-
-    @Test
-    void testOtus() {
-        driver.get("https://duckduckgo.com/");
-
-        WebElement searchInput = driver.findElement(By.name("q"));
-        searchInput.sendKeys("ОТУС");
-        searchInput.submit();
-
-        WebElement list = driver.findElement(By.className("react-results--main"));
-        WebElement firstResult = list.findElement(By.cssSelector("a.result__a")); // Предполагая, что первый результат находится в теге 'a' с классом 'result__a'
-
-        assertEquals("Онлайн‑курсы для профессионалов, дистанционное обучение современным ...", firstResult.getText());
     }
 }
