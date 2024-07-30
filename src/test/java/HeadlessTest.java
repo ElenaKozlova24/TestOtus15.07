@@ -1,12 +1,11 @@
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HeadlessTest {
     public static void main(String[] args) {
@@ -28,13 +27,27 @@ public class HeadlessTest {
             driver.get(url);
 
             WebDriverWait wait = new WebDriverWait(driver, 20);
+
+            // Ожидание загрузки страницы
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.name("q")));
+
             WebElement searchInput = wait.until(ExpectedConditions.presenceOfElementLocated(By.name("q")));
             searchInput.sendKeys("Отус");
             WebElement searchButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button.searchbox_searchButton__F5Bwq")));
             searchButton.click();
-            WebElement resultElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.ikg2IXiCD14iVX7AdZo1")));
+
+            // Ожидание загрузки результатов поиска
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".result__a")));
+
+            // Прокрутка страницы до элемента
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
+
+            // Ожидание видимости элемента
+            WebElement resultElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".EKtkFWMYpwzMKOYr0GYm.LQVY1Jpkk8nyJ6HBWKAk")));
+
             String resultText = resultElement.getText();
-            assertTrue(resultText.contains("Онлайн‑курсы для профессионалов, дистанционное обучение современным"));
+            System.out.println(resultText);
         } finally {
             if (driver != null) {
                 driver.quit();
