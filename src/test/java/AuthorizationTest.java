@@ -39,8 +39,6 @@ class AuthorizationTest {
                 getCookies()) {
             System.out.println(cookie.toString());
         }
-
-        // Закрытие браузера
         driver.quit();
     }
 }
