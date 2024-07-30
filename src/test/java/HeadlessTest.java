@@ -28,24 +28,16 @@ public class HeadlessTest {
 
             WebDriverWait wait = new WebDriverWait(driver, 20);
 
-            // Ожидание загрузки страницы
             wait.until(ExpectedConditions.presenceOfElementLocated(By.name("q")));
 
             WebElement searchInput = wait.until(ExpectedConditions.presenceOfElementLocated(By.name("q")));
             searchInput.sendKeys("Отус");
             WebElement searchButton = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("button.searchbox_searchButton__F5Bwq")));
             searchButton.click();
-
-            // Ожидание загрузки результатов поиска
             wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".result__a")));
-
-            // Прокрутка страницы до элемента
             JavascriptExecutor js = (JavascriptExecutor) driver;
             js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
-
-            // Ожидание видимости элемента
             WebElement resultElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".EKtkFWMYpwzMKOYr0GYm.LQVY1Jpkk8nyJ6HBWKAk")));
-
             String resultText = resultElement.getText();
             System.out.println(resultText);
         } finally {
