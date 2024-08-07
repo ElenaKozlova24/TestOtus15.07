@@ -1,3 +1,4 @@
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -7,7 +8,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HeadlessTest {
     public static void main(String[] args) {
-        System.setProperty("webdriver.chrome.driver", "/Users/kirill/Documents/chromedriver-mac-x64/chromedriver");
+        WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
         options.addArguments("--disable-gpu");
@@ -51,6 +51,7 @@ public class HeadlessTest {
             }
         }
     }
+
     private static void takeScreenshot(WebDriver driver, String filePath) {
         if (driver instanceof TakesScreenshot) {
             File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
@@ -63,4 +64,3 @@ public class HeadlessTest {
         }
     }
 }
-
