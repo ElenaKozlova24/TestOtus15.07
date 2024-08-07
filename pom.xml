@@ -43,7 +43,7 @@
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
-            <version>5.6.4</version>
+            <version>5.1.1</version> <!-- Убедитесь, что используете последнюю версию -->
         </dependency>
 
         <dependency>
@@ -72,12 +72,6 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.7.1</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>io.github.bonigarcia</groupId>
-            <artifactId>webdrivermanager</artifactId>
-            <version>5.1.1</version> <!-- Убедитесь, что используете последнюю версию -->
         </dependency>
 
         <dependency>
