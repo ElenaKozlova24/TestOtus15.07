@@ -1,3 +1,5 @@
+import driver.DriverFactory;
+import driver.DriverNotSupportedException;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,17 +13,18 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.net.MalformedURLException;
+import java.time.Duration;
+
 public class KioskTest {
 
     private static final Logger logger = LogManager.getLogger(KioskTest.class);
     private static WebDriver driver;
 
     @BeforeAll
-    public static void setUp() {
-        WebDriverManager.chromedriver().setup();
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--kiosk");
-        driver = new ChromeDriver(options);
+    public static void setUp() throws MalformedURLException, DriverNotSupportedException {
+        DriverFactory driverFactory = new DriverFactory();
+        driver = driverFactory.getDriver();
     }
 
     @AfterAll
@@ -49,7 +52,7 @@ public class KioskTest {
             Actions actions = new Actions(driver);
             actions.moveToElement(element).click().perform();
 
-            WebElement modalAfter = new WebDriverWait(driver, 10)
+            WebElement modalAfter = new WebDriverWait(driver, Duration.ofSeconds(10))
                     .until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.pp_hoverContainer")));
 
             Assertions.assertNotNull(modalAfter, "Modal not found after the event");
