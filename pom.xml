@@ -37,13 +37,13 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>3.141.59</version>
+            <version>4.1.2</version> <!-- Обновлено до последней версии -->
         </dependency>
 
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
-            <version>5.1.1</version> <!-- Убедитесь, что используете последнюю версию -->
+            <version>5.1.1</version> <!-- Убедитесь, что это последняя версия -->
         </dependency>
 
         <dependency>

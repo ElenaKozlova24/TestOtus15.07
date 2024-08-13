@@ -1,4 +1,11 @@
+package com;
+
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -17,7 +24,12 @@ import java.nio.file.Paths;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HeadlessTest {
-    public static void main(String[] args) {
+
+    private static final Logger logger = LogManager.getLogger(HeadlessTest.class);
+    private WebDriver driver;
+
+    @BeforeEach
+    public void setUp() {
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
@@ -28,9 +40,23 @@ public class HeadlessTest {
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
 
-        WebDriver driver = null;
+        driver = new ChromeDriver(options);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        if (driver != null) {
+            try {
+                driver.quit();
+            } catch (Exception e) {
+                logger.error("Ошибка при закрытии драйвера", e);
+            }
+        }
+    }
+
+    @Test
+    public void testDuckDuckGoSearch() {
         try {
-            driver = new ChromeDriver(options);
             String url = "https://duckduckgo.com/";
             driver.get(url);
             WebDriverWait wait = new WebDriverWait(driver, 30);
@@ -42,14 +68,10 @@ public class HeadlessTest {
             String resultText = resultElement.getText();
             assertTrue(resultText.contains("Онлайн‑курсы для профессионалов, дистанционное обучение современным"), "Текст не найден");
 
-            System.out.println("Тест пройден!");
+            logger.info("Тест пройден!");
         } catch (Exception e) {
             takeScreenshot(driver, "error_screenshot.png");
-            e.printStackTrace();
-        } finally {
-            if (driver != null) {
-                driver.quit();
-            }
+            logger.error("Ошибка при выполнении теста", e);
         }
     }
 
@@ -58,9 +80,9 @@ public class HeadlessTest {
             File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
             try {
                 Files.copy(Paths.get(screenshot.getPath()), Paths.get(filePath));
-                System.out.println("Скриншот сохранен в: " + filePath);
+                logger.info("Скриншот сохранен в: " + filePath);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("Ошибка при сохранении скриншота", e);
             }
         }
     }

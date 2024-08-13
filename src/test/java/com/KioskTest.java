@@ -1,5 +1,9 @@
+package com;
+
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.junit.Assert;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -9,15 +13,37 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class KioskTest {
 
-    public static void main(String[] args) {
-        WebDriverManager.chromedriver().setup();
+    private WebDriver driver;
 
+    @BeforeEach
+    public void setUp() {
+        WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--kiosk");
-        WebDriver driver = new ChromeDriver(options);
+        driver = new ChromeDriver(options);
+    }
 
+    @AfterEach
+    public void tearDown() {
+        if (driver != null) {
+            try {
+                driver.quit();
+            } catch (Exception e) {
+                System.err.println("Ошибка при закрытии драйвера: " + e.getMessage());
+            }
+        }
+    }
+
+    @Test
+    public void testModalVisibility() {
         try {
             String url = "https://demo.w3layouts.com/demos_new/template_demo/03-10-2020/photoflash-liberty-demo_Free/685659620/web/index.html?_ga=2.181802926.889871791.1632394818-2083132868.1632394818";
             driver.get(url);
@@ -25,7 +51,7 @@ public class KioskTest {
             WebElement modalBefore = null;
             try {
                 modalBefore = driver.findElement(By.cssSelector("div.pp_hoverContainer"));
-                Assert.assertFalse("Modal is visible before the event", modalBefore.isDisplayed());
+                assertFalse(modalBefore.isDisplayed(), "Modal is visible before the event");
             } catch (Exception e) {
                 System.out.println("Modal not found before the event");
             }
@@ -34,16 +60,14 @@ public class KioskTest {
             Actions actions = new Actions(driver);
             actions.moveToElement(element).click().perform();
 
-            WebElement modalAfter = new WebDriverWait(driver, 10)
+            WebElement modalAfter = new WebDriverWait(driver, Duration.ofSeconds(10))
                     .until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("div.pp_hoverContainer")));
 
-            Assert.assertNotNull("Modal not found after the event", modalAfter);
-            Assert.assertTrue("Modal is not visible after the event", modalAfter.isDisplayed());
+            assertNotNull(modalAfter, "Modal not found after the event");
+            assertTrue(modalAfter.isDisplayed(), "Modal is not visible after the event");
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            driver.quit();
         }
     }
 }
